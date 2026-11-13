@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Food Delivery Predictor</title>
+</head>
+<body>
+
+<h2>Food Delivery Time Prediction</h2>
+
+<form id="form">
+
+<input type="number" id="Order_Hour" placeholder="Order Hour" required><br><br>
+<input type="text" id="Day_of_Week" placeholder="Day of Week" required><br><br>
+<input type="number" id="Is_Weekend" placeholder="Is Weekend" required><br><br>
+<input type="number" id="Is_Festival" placeholder="Is Festival" required><br><br>
+<input type="text" id="Weather" placeholder="Weather" required><br><br>
+<input type="text" id="Pickup_Zone" placeholder="Pickup Zone" required><br><br>
+<input type="text" id="Dropoff_Zone" placeholder="Dropoff Zone" required><br><br>
+<input type="text" id="Vehicle_Type" placeholder="Vehicle Type" required><br><br>
+<input type="number" step="any" id="Rider_Experience_Years" placeholder="Rider Experience Years" required><br><br>
+<input type="number" step="any" id="Rider_Rating" placeholder="Rider Rating" required><br><br>
+<input type="number" step="any" id="Restaurant_Rating" placeholder="Restaurant Rating" required><br><br>
+<input type="text" id="Cuisine_Type" placeholder="Cuisine Type" required><br><br>
+<input type="number" id="Order_Items" placeholder="Order Items" required><br><br>
+<input type="text" id="Restaurant_Load" placeholder="Restaurant Load" required><br><br>
+<input type="number" id="Preparation_Time_Min" placeholder="Preparation Time" required><br><br>
+<input type="number" step="any" id="Road_Distance_km" placeholder="Road Distance" required><br><br>
+<input type="text" id="Delivery_Distance_Category" placeholder="Delivery Distance Category" required><br><br>
+<input type="text" id="Traffic_Level" placeholder="Traffic Level" required><br><br>
+<input type="number" id="Number_of_Signals" placeholder="Number of Signals" required><br><br>
+<input type="number" step="any" id="Average_Speed_kmph" placeholder="Average Speed" required><br><br>
+<input type="text" id="Delivery_Priority" placeholder="Delivery Priority" required><br><br>
+
+<button type="submit">Predict</button>
+
+</form>
+
+<h3 id="result"></h3>
+
+<script>
+
+document.getElementById("form").addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const data = {
+        Order_Hour: +document.getElementById("Order_Hour").value,
+        Day_of_Week: document.getElementById("Day_of_Week").value,
+        Is_Weekend: +document.getElementById("Is_Weekend").value,
+        Is_Festival: +document.getElementById("Is_Festival").value,
+        Weather: document.getElementById("Weather").value,
+        Pickup_Zone: document.getElementById("Pickup_Zone").value,
+        Dropoff_Zone: document.getElementById("Dropoff_Zone").value,
+        Vehicle_Type: document.getElementById("Vehicle_Type").value,
+        Rider_Experience_Years: +document.getElementById("Rider_Experience_Years").value,
+        Rider_Rating: +document.getElementById("Rider_Rating").value,
+        Restaurant_Rating: +document.getElementById("Restaurant_Rating").value,
+        Cuisine_Type: document.getElementById("Cuisine_Type").value,
+        Order_Items: +document.getElementById("Order_Items").value,
+        Restaurant_Load: document.getElementById("Restaurant_Load").value,
+        Preparation_Time_Min: +document.getElementById("Preparation_Time_Min").value,
+        Road_Distance_km: +document.getElementById("Road_Distance_km").value,
+        Delivery_Distance_Category: document.getElementById("Delivery_Distance_Category").value,
+        Traffic_Level: document.getElementById("Traffic_Level").value,
+        Number_of_Signals: +document.getElementById("Number_of_Signals").value,
+        Average_Speed_kmph: +document.getElementById("Average_Speed_kmph").value,
+        Delivery_Priority: document.getElementById("Delivery_Priority").value
+    };
+
+    try {
+
+        const res = await fetch("/predict", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        console.log(result);
+
+        if (!res.ok) {
+            throw new Error(JSON.stringify(result));
+        }
+
+        const prediction = result["Predicted Delivery Time"];
+
+        if (prediction === undefined) {
+            throw new Error("Prediction value not found in API response.");
+        }
+
+        document.getElementById("result").innerText =
+            "Predicted Delivery Time: " + Number(prediction).toFixed(2) + " minutes";
+
+    }
+
+    catch(error) {
+
+        document.getElementById("result").innerText =
+            "Error: " + error.message;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
